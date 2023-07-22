@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ToDoAdapter(this) {
             @Override
             public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
             }
         };
         taskRV.setAdapter(adapter);
