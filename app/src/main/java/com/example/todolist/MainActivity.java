@@ -1,14 +1,19 @@
 package com.example.todolist;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity {
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+public class MainActivity extends AppCompatActivity {
+    private RecyclerView taskRV;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getSupportActionBar().hide();
+        taskRV = (RecyclerView) findViewById(R.id.taskRecycleView);
+        taskRV.setLayoutManager(new LinearLayoutManager(this));
     }
 }
