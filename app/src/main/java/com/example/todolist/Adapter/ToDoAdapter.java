@@ -14,7 +14,7 @@ import com.example.todolist.R;
 
 import java.util.List;
 
-public class ToDoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public abstract class ToDoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final MainActivity activity;
     private List<ToDoModel> tdmList;
@@ -25,20 +25,20 @@ public class ToDoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_layout, parent, false);
         return new ViewHolder(itemView);
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
-    }
-
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ToDoModel item = tdmList.get(position);
         holder.task.setText(item.getTask());
         holder.task.setChecked(toBoolean(item.getStatus()));
+    }
+
+    public void setTasks(List<ToDoModel> todoList) {
+        this.tdmList = todoList;
+        notifyDataSetChanged();
     }
 
     private boolean toBoolean(int n) {
