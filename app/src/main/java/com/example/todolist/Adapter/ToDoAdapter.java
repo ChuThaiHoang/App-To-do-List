@@ -1,5 +1,6 @@
 package com.example.todolist.Adapter;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,26 +20,26 @@ import com.example.todolist.utils.DatabaseHandler;
 import java.util.List;
 
 public abstract class ToDoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    private final MainActivity activity;
     private final DatabaseHandler db;
-    private List<ToDoModel> tdmList;
+    private List<ToDoModel> todoList;
+    private final MainActivity activity;
 
     public ToDoAdapter(DatabaseHandler db, MainActivity activity) {
-        this.activity = activity;
         this.db = db;
+        this.activity = activity;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_layout, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.task_layout, parent, false);
         return new ViewHolder(itemView);
     }
 
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         db.openDatabase();
-        ToDoModel item = tdmList.get(position);
+        ToDoModel item = todoList.get(position);
         holder.task.setText(item.getTask());
         holder.task.setChecked(toBoolean(item.getStatus()));
         holder.task.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -53,22 +54,32 @@ public abstract class ToDoAdapter extends RecyclerView.Adapter<RecyclerView.View
         });
     }
 
-    public void setTasks(List<ToDoModel> todoList) {
-        this.tdmList = todoList;
-        notifyDataSetChanged();
-    }
-
     private boolean toBoolean(int n) {
         return n != 0;
     }
 
-    @Override
     public int getItemCount() {
-        return tdmList.size();
+        return todoList.size();
+    }
+
+    public Context getContext() {
+        return activity;
+    }
+
+    public void setTasks(List<ToDoModel> todoList) {
+        this.todoList = todoList;
+        notifyDataSetChanged();
+    }
+
+    public void deleteItem(int position) {
+        ToDoModel item = todoList.get(position);
+        db.deleteTask(item.getId());
+        todoList.remove(position);
+        notifyItemRemoved(position);
     }
 
     public void editItem(int position) {
-        ToDoModel item = tdmList.get(position);
+        ToDoModel item = todoList.get(position);
         Bundle bundle = new Bundle();
         bundle.putInt("id", item.getId());
         bundle.putString("task", item.getTask());

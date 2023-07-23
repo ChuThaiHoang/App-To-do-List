@@ -4,11 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import androidx.annotation.Nullable;
 
 import com.example.todolist.Model.ToDoModel;
 
@@ -22,30 +19,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String ID = "id";
     private static final String Task = "task";
     private static final String Status = "status";
-    private static final String CreateToDoTable = "create table " + ToDoTable + " ( " + ID + " Integer primary key autoincrement, "
-            + Task + " Text, " + Status + " integer )";
+    private static final String CREATE_TODO_TABLE = "CREATE TABLE " + ToDoTable + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + Task + " TEXT, "
+            + Status + " INTEGER)";
     private SQLiteDatabase db;
 
     public DatabaseHandler(Context context) {
         super(context, Name, null, Version);
     }
 
-    public DatabaseHandler(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
-    }
-
-    public DatabaseHandler(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version, @Nullable DatabaseErrorHandler errorHandler) {
-        super(context, name, factory, version, errorHandler);
-    }
-
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CreateToDoTable);
+        db.execSQL(CREATE_TODO_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
+        // Drop older table if existed
         db.execSQL("DROP TABLE IF EXISTS " + ToDoTable);
+        // Create tables again
         onCreate(db);
     }
 
@@ -73,7 +64,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         ToDoModel task = new ToDoModel();
                         task.setId(cur.getInt(cur.getColumnIndex(ID)));
                         task.setTask(cur.getString(cur.getColumnIndex(Task)));
-                        task.setStatus(cur.getColumnIndex(Status));
+                        task.setStatus(cur.getInt(cur.getColumnIndex(Status)));
                         tasklist.add(task);
                     }
                     while (cur.moveToNext());
@@ -81,6 +72,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             }
         } finally {
             db.endTransaction();
+            assert cur != null;
             cur.close();
         }
         return tasklist;
@@ -96,6 +88,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(Task, task);
         db.update(ToDoTable, cv, ID + "= ?", new String[]{String.valueOf(id)});
+    }
+
+    public void getTaskById(int id) {
+        db.execSQL("select task where " + id + " = ?", new String[]{String.valueOf(id)});
     }
 
     public void deleteTask(int id) {
