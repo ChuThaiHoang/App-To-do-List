@@ -22,11 +22,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String ID = "id";
     private static final String Task = "task";
     private static final String Status = "status";
-    private static final String CreateToDoTable = "create table" + ToDoTable + "{" + ID + "Integer primary key autoincrement, "
-            + Task + "Text, " + Status + "integer}";
+    private static final String CreateToDoTable = "create table " + ToDoTable + " ( " + ID + " Integer primary key autoincrement, "
+            + Task + " Text, " + Status + " integer )";
     private SQLiteDatabase db;
 
-    private DatabaseHandler(Context context) {
+    public DatabaseHandler(Context context) {
         super(context, Name, null, Version);
     }
 
@@ -45,7 +45,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        db.execSQL("DROP TABLE IF EXISTS" + ToDoTable);
+        db.execSQL("DROP TABLE IF EXISTS " + ToDoTable);
         onCreate(db);
     }
 
