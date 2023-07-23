@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@null"
-        android:hint="New Task"
+        android:hint="Ghi chú mới"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <Button
@@ -21,6 +21,6 @@
         android:background="@android:color/transparent"
         android:text="save"
         android:textAllCaps="false"
-        android:textColor="@color/black"
+        android:textColor="#B5B2B8"
         android:textSize="16sp" />
 </RelativeLayout>

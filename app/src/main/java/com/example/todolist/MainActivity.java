@@ -14,8 +14,10 @@ import com.example.todolist.Model.ToDoModel;
 import com.example.todolist.utils.DatabaseHandler;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements DialogCloseListener {
     private RecyclerView taskRV;
@@ -28,10 +30,10 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
         db = new DatabaseHandler(this);
         db.openDatabase();
-//        modelList = new ArrayList<>();
+        modelList = new ArrayList<>();
         taskRV = (RecyclerView) findViewById(R.id.taskRecycleView);
         taskRV.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ToDoAdapter(db, this) {

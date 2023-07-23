@@ -1,5 +1,6 @@
 package com.example.todolist;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -13,8 +14,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.example.todolist.Model.ToDoModel;
 import com.example.todolist.utils.DatabaseHandler;
@@ -36,65 +37,68 @@ public class AddNewTask extends BottomSheetDialogFragment {
         setStyle(STYLE_NORMAL, R.style.DialogStyle);
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstaceState) {
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstaceState) {
         View view = inflater.inflate(R.layout.new_task, container, false);
         getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         return view;
     }
 
-    public void onViewCreated(View view, Bundle savedInstaceState) {
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstaceState) {
         super.onViewCreated(view, savedInstaceState);
-        newTasktext = getView().findViewById(R.id.newTasktext);
+        newTasktext = requireView().findViewById(R.id.newTasktext);
         newTaskSaveButton = getView().findViewById(R.id.newTaskbutton);
-        db = new DatabaseHandler(getActivity());
-        db.openDatabase();
         boolean isUpdate = false;
         final Bundle bundle = getArguments();
         if (bundle != null) {
             isUpdate = true;
             String task = Bundle.EMPTY.getString("Task");
-            if (task.length() > 0) {
-                newTasktext.setTextColor(ContextCompat.getColor(getContext(), com.google.android.material.R.color.design_default_color_primary_dark));
-            }
-            newTasktext.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    if (charSequence.toString().equals("")) {
-                        newTaskSaveButton.setEnabled(false);
-                        newTaskSaveButton.setTextColor(Color.GRAY);
-                    } else {
-                        newTaskSaveButton.setEnabled(true);
-                        newTaskSaveButton.setTextColor(ContextCompat.getColor(getContext(), com.google.android.material.R.color.design_default_color_primary_dark));
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
-            boolean finalIsUpdate = isUpdate;
-            newTaskSaveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    String text = newTasktext.getText().toString();
-                    if (finalIsUpdate) {
-                        db.updateTask(bundle.getInt("id"), text);
-                    } else {
-                        ToDoModel task = new ToDoModel();
-                        task.setTask(text);
-                        task.setStatus(0);
-                    }
-                    dismiss();
-                }
-            });
+            if (task.length() > 0)
+                newTasktext.setTextColor(Color.BLACK);
         }
+        db = new DatabaseHandler(getActivity());
+        db.openDatabase();
+        newTasktext.addTextChangedListener(new TextWatcher() {
+            @SuppressLint("ResourceAsColor")
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @SuppressLint("ResourceAsColor")
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.toString().equals("")) {
+                    newTaskSaveButton.setEnabled(false);
+                    newTaskSaveButton.setTextColor(R.color.gray);
+                } else {
+                    newTaskSaveButton.setEnabled(true);
+                    newTaskSaveButton.setTextColor(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        boolean finalIsUpdate = isUpdate;
+        newTaskSaveButton.setOnClickListener(view1 ->
+        {
+            String text = newTasktext.getText().toString();
+            if (finalIsUpdate) {
+                db.updateTask(bundle.getInt("id"), text);
+            } else {
+                ToDoModel task = new ToDoModel();
+                task.setTask(text);
+                task.setStatus(0);
+                db.InsertTask(task);
+
+            }
+            dismiss();
+        });
     }
+
 
     public void onDismiss(DialogInterface dialog) {
         Activity activity = getActivity();
